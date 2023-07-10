@@ -1,5 +1,5 @@
 //
-//  Logger.swift
+//  Logma.swift
 //  
 //
 //  Created by jsilver on 2021/06/22.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Logger {
+public struct Logma {
     public struct Key: Hashable, Equatable {
         public typealias RawValue = String
         
@@ -147,7 +147,8 @@ public struct Logger {
             .fileName: file,
             .function: function,
             .line: line
-        ].merging(userInfo) { current, _ in current }
+        ]
+            .merging(userInfo) { current, _ in current }
         
         printers.forEach {
             $0.print(

@@ -15,8 +15,8 @@ public struct ConsolePrinter: Printer {
         
     }
     
-    // MARK: - Public
-    public func print(_ message: Any, userInfo: [Logger.Key: Any], level: Logger.Level) {
+    // MARK: - Lifecycle
+    public func print(_ message: Any, userInfo: [Logma.Key: Any], level: Logma.Level) {
         guard let date = userInfo[.date] as? String,
               let fileName = (userInfo[.fileName] as? NSString)?.lastPathComponent,
               let function = userInfo[.function] as? String,
@@ -34,8 +34,10 @@ public struct ConsolePrinter: Printer {
         Swift.print("\(log)\(message)")
     }
     
+    // MARK: - Public
+    
     // MARK: - Private
-    private func marker(from level: Logger.Level) -> String {
+    private func marker(from level: Logma.Level) -> String {
         switch level {
         case .debug:
             return "🟢"

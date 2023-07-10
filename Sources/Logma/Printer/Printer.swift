@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol Printer {
-    func print(_ message: Any, userInfo: [Logger.Key: Any], level: Logger.Level)
+    func print(_ message: Any, userInfo: [Logma.Key: Any], level: Logma.Level)
 }
