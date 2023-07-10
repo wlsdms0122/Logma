@@ -48,12 +48,16 @@ public class Logmo: ObservableObject {
         window = nil
     }
     
-    func setTitle(_ title: String) {
+    public func setTitle(_ title: String) {
         self.title = title
     }
     
-    func addLog(_ log: Log) {
+    public func addLog(_ log: Log) {
         logs.append(log)
+    }
+    
+    public func clear() {
+        logs.removeAll()
     }
     
     // MARK: - Private

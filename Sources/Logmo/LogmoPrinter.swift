@@ -31,7 +31,7 @@ public struct LogmoPrinter: Printer {
             log.append("[\(category)] ")
         }
         
-        Logmo.shared.addLog(.init(level: level, message: "\(log)\(message)"))
+        Logmo.shared.addLog(.init("\(log)\(message)", level: level))
     }
     
     // MARK: - Public
