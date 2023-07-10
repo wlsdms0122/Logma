@@ -107,6 +107,9 @@ struct LogmoView: View {
                 ScrollViewReader { reader in
                     ZStack(alignment: .bottomTrailing) {
                         LogList(logs)
+                            .onAppear {
+                                reader.scrollTo(lastItemID, anchor: .bottom)
+                            }
                             .onChange(of: lastItemID) { id in
                                 guard shouldAutoScroll else { return }
                                 
