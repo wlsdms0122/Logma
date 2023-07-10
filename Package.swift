@@ -12,6 +12,10 @@ let package = Package(
         .library(
             name: "Logma",
             targets: ["Logma"]
+        ),
+        .library(
+            name: "Logmo",
+            targets: ["Logmo"]
         )
     ],
     dependencies: [],
@@ -19,6 +23,12 @@ let package = Package(
         .target(
             name: "Logma",
             dependencies: []
+        ),
+        .target(
+            name: "Logmo",
+            dependencies: [
+                "Logma"
+            ]
         )
     ]
 )
