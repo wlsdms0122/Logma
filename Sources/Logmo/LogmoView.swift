@@ -11,11 +11,11 @@ import SwiftUI
 struct LogmoView: View {
     struct ScrollRect: Equatable {
         let scrollViewFrame: CGRect
-        let lastItemFrame: CGRect
+        let contentViewFrame: CGRect
         
-        init(scrollView scrollViewFrame: CGRect, lastItem lastItemFrame: CGRect) {
+        init(scrollView scrollViewFrame: CGRect, contentView contentViewFrame: CGRect) {
             self.scrollViewFrame = scrollViewFrame
-            self.lastItemFrame = lastItemFrame
+            self.contentViewFrame = contentViewFrame
         }
     }
     
@@ -193,33 +193,28 @@ struct LogmoView: View {
             ScrollView {
                 LazyVStack(spacing: 4) {
                     Enumerator(logs) { index, log in
-                        if index == logs.count - 1 {
-                            LogView(log)
-                                .id(index)
-                                .overlay(
-                                    GeometryReader { reader in
-                                        let scrollRect = ScrollRect(
-                                            scrollView: scrollViewReader.frame(in: .global),
-                                            lastItem: reader.frame(in: .global)
-                                        )
-                                        
-                                        Color.clear.onChange(of: scrollRect) { rects in
-                                            let shouldAutoScroll = rects.lastItemFrame.maxY <= rects.scrollViewFrame.maxY + rects.lastItemFrame.height
-                                            
-                                            guard shouldAutoScroll || !isAutoScrolling else { return }
-                                            
-                                            isAutoScrolling = false
-                                            
-                                            self.shouldAutoScroll = shouldAutoScroll
-                                        }
-                                    }
-                                )
-                        } else {
-                            LogView(log)
-                        }
+                        LogView(log).id(index)
                     }
                 }
                     .padding(.horizontal, 8)
+                    .overlay(
+                        GeometryReader { reader in
+                            let scrollRect = ScrollRect(
+                                scrollView: scrollViewReader.frame(in: .global),
+                                contentView: reader.frame(in: .global)
+                            )
+                            
+                            Color.clear.onChange(of: scrollRect) { rects in
+                                let shouldAutoScroll = rects.contentViewFrame.maxY <= rects.scrollViewFrame.maxY + LogmoView.MINIMUM_SCROLL_THRESHOLD
+                                
+                                guard shouldAutoScroll || !isAutoScrolling else { return }
+                                
+                                isAutoScrolling = false
+                                
+                                self.shouldAutoScroll = shouldAutoScroll
+                            }
+                        }
+                    )
             }
         }
     }
@@ -271,6 +266,7 @@ struct LogmoView: View {
     
     // MARK: - Constant
     private static let MINIMUM_CONTENT_HEIGHT: CGFloat = 150
+    private static let MINIMUM_SCROLL_THRESHOLD: CGFloat = 40
     
     // MARK: - Property
     @State
