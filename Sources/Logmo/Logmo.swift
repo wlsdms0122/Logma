@@ -20,6 +20,8 @@ public class Logmo: ObservableObject {
     @Published
     private(set) var logs: [Log] = []
     
+    private let settings = Settings()
+    
     // MARK: - Initializer
     private init() { }
     
@@ -33,7 +35,9 @@ public class Logmo: ObservableObject {
         
         guard let windowScene = windowScene else { return }
         
-        let viewController = UIHostingController(rootView: LogmoView(logmo: self))
+        let viewController = UIHostingController(
+            rootView: LogmoView(self, settings: settings)
+        )
         viewController.view.backgroundColor = .clear
         
         let window = ContentResponderWindow(windowScene: windowScene)

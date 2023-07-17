@@ -11,11 +11,11 @@ import SwiftUI
 struct LogmoView: View {
     struct ScrollRect: Equatable {
         let scrollViewFrame: CGRect
-        let lastItemFrame: CGRect
+        let contentViewFrame: CGRect
         
-        init(scrollView scrollViewFrame: CGRect, lastItem lastItemFrame: CGRect) {
+        init(scrollView scrollViewFrame: CGRect, contentView contentViewFrame: CGRect) {
             self.scrollViewFrame = scrollViewFrame
-            self.lastItemFrame = lastItemFrame
+            self.contentViewFrame = contentViewFrame
         }
     }
     
@@ -34,6 +34,12 @@ struct LogmoView: View {
             
             Spacer()
         }
+            .sheet(isPresented: $isSettingPresented) {
+                SettingView(logmo, settings: settings) {
+                    Haptic.shared.impact(style: .rigid)
+                    isSettingPresented = false
+                }
+            }
     }
     
     @ViewBuilder
@@ -53,7 +59,8 @@ struct LogmoView: View {
     @ViewBuilder
     private func SettingButton() -> some View {
         Button {
-            
+            Haptic.shared.impact(style: .rigid)
+            isSettingPresented = true
         } label: {
             Image(systemName: "line.3.horizontal")
                 .resizable()
@@ -84,6 +91,7 @@ struct LogmoView: View {
             : "square.split.bottomrightquarter"
         
         Button {
+            Haptic.shared.impact(style: .rigid)
             isExpand.toggle()
         } label: {
             Image(systemName: imageName)
@@ -98,41 +106,54 @@ struct LogmoView: View {
     @ViewBuilder
     private func ContentView() -> some View {
         let logs = logmo.logs.filter { levelFilter.contains($0.level) }
+            .filter { query.isEmpty || $0.message.contains(query) }
         let lastItemID = logs.count - 1
         
         GeometryReader { reader in
             VStack(spacing: 0) {
-                FilterView()
-                    .padding(8)
-                ScrollViewReader { reader in
-                    ZStack(alignment: .bottomTrailing) {
-                        LogList(logs)
-                            .onAppear {
-                                reader.scrollTo(lastItemID, anchor: .bottom)
-                            }
-                            .onChange(of: lastItemID) { id in
-                                guard shouldAutoScroll else { return }
-                                
+                VStack {
+                    Group {
+                        if settings.showFilters {
+                            FilterView()
+                        }
+                        if settings.showSearchBar {
+                            SearchBar()
+                        }
+                    }
+                        .padding(.horizontal, 8)
+                    
+                    ScrollViewReader { reader in
+                        ZStack(alignment: .bottomTrailing) {
+                            LogList(logs)
+                                .onAppear {
+                                    reader.scrollTo(lastItemID, anchor: .bottom)
+                                }
+                                .onChange(of: lastItemID) { id in
+                                    guard shouldAutoScroll else { return }
+                                    
+                                    isAutoScrolling = true
+                                    
+                                    withAnimation {
+                                        reader.scrollTo(id, anchor: .bottom)
+                                    }
+                                }
+                            
+                            ScrollToBottomButton {
                                 isAutoScrolling = true
                                 
                                 withAnimation {
-                                    reader.scrollTo(id, anchor: .bottom)
+                                    reader.scrollTo(lastItemID, anchor: .bottom)
                                 }
                             }
-                        
-                        ScrollToBottomButton {
-                            isAutoScrolling = true
-                            
-                            withAnimation {
-                                reader.scrollTo(lastItemID, anchor: .bottom)
-                            }
-                        }
                             .padding(.trailing, 16)
                             .padding(.bottom, 8)
                             .opacity(shouldAutoScroll ? 0 : 1)
                             .animation(.default, value: shouldAutoScroll)
+                        }
                     }
                 }
+                    .padding(.top, 8)
+                
                 Handle()
                     .gesture(
                         DragGesture(coordinateSpace: .global)
@@ -169,6 +190,8 @@ struct LogmoView: View {
         let backgroundColor: Color = containsLevel ? logColor(level: level) : Color(hex: 0x454545)
         
         Button {
+            Haptic.shared.impact(style: .rigid)
+            
             if containsLevel {
                 levelFilter.remove(level)
             } else {
@@ -188,38 +211,74 @@ struct LogmoView: View {
     }
     
     @ViewBuilder
+    private func SearchBar() -> some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .resizable()
+                .foregroundColor(Color(hex: 0xFFFFFF))
+                .frame(width: 10, height: 10)
+            
+            ZStack(alignment: .leading) {
+                TextField("", text: $query)
+                    .foregroundColor(Color(hex: 0xFFFFFF))
+                    .accentColor(Color(hex: 0xFFFFFF))
+                
+                if query.isEmpty {
+                    Text("Search")
+                        .foregroundColor(Color(hex: 0xEBEBF5))
+                }
+            }
+                .font(.system(size: 10, weight: .light))
+            
+            if !query.isEmpty {
+                Button {
+                    Haptic.shared.impact(style: .rigid)
+                    query = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .resizable()
+                        .foregroundColor(Color(hex: 0xEBEBF5))
+                        .frame(width: 10, height: 10)
+                }
+            }
+        }
+            .padding(.horizontal, 8)
+            .frame(height: 20)
+            .frame(maxWidth: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: 4)
+                    .foregroundColor(Color(hex: 0x292929))
+            )
+    }
+    
+    @ViewBuilder
     private func LogList(_ logs: [Log]) -> some View {
         GeometryReader { scrollViewReader in
             ScrollView {
                 LazyVStack(spacing: 4) {
                     Enumerator(logs) { index, log in
-                        if index == logs.count - 1 {
-                            LogView(log)
-                                .id(index)
-                                .overlay(
-                                    GeometryReader { reader in
-                                        let scrollRect = ScrollRect(
-                                            scrollView: scrollViewReader.frame(in: .global),
-                                            lastItem: reader.frame(in: .global)
-                                        )
-                                        
-                                        Color.clear.onChange(of: scrollRect) { rects in
-                                            let shouldAutoScroll = rects.lastItemFrame.maxY <= rects.scrollViewFrame.maxY + rects.lastItemFrame.height
-                                            
-                                            guard shouldAutoScroll || !isAutoScrolling else { return }
-                                            
-                                            isAutoScrolling = false
-                                            
-                                            self.shouldAutoScroll = shouldAutoScroll
-                                        }
-                                    }
-                                )
-                        } else {
-                            LogView(log)
-                        }
+                        LogView(log).id(index)
                     }
                 }
                     .padding(.horizontal, 8)
+                    .overlay(
+                        GeometryReader { reader in
+                            let scrollRect = ScrollRect(
+                                scrollView: scrollViewReader.frame(in: .global),
+                                contentView: reader.frame(in: .global)
+                            )
+                            
+                            Color.clear.onChange(of: scrollRect) { rects in
+                                let shouldAutoScroll = rects.contentViewFrame.maxY <= rects.scrollViewFrame.maxY + LogmoView.MINIMUM_SCROLL_THRESHOLD
+                                
+                                guard shouldAutoScroll || !isAutoScrolling else { return }
+                                
+                                isAutoScrolling = false
+                                
+                                self.shouldAutoScroll = shouldAutoScroll
+                            }
+                        }
+                    )
             }
         }
     }
@@ -271,29 +330,40 @@ struct LogmoView: View {
     
     // MARK: - Constant
     private static let MINIMUM_CONTENT_HEIGHT: CGFloat = 150
+    private static let MINIMUM_SCROLL_THRESHOLD: CGFloat = 40
     
     // MARK: - Property
     @State
     private var isExpand: Bool = false
     @State
     private var levelFilter: Set<Logma.Level> = [.debug, .info, .notice, .error, .fault]
+    @State
+    private var query: String = ""
     
+    // Content view size properties
     @GestureState
     private var translation: CGSize = .zero
     @State
     private var contentHeight: CGFloat = LogmoView.MINIMUM_CONTENT_HEIGHT
     
+    // Content view auto scrolling properties
     @State
     private var shouldAutoScroll: Bool = true
     @State
     private var isAutoScrolling: Bool = false
     
+    @State
+    private var isSettingPresented: Bool = false
+    
     @StateObject
     private var logmo: Logmo
+    @StateObject
+    private var settings: Settings
     
     // MARK: - Initializer
-    init(logmo: Logmo) {
+    init(_ logmo: Logmo, settings: Settings) {
         self._logmo = .init(wrappedValue: logmo)
+        self._settings = .init(wrappedValue: settings)
     }
     
     // MARK: - Public
@@ -359,7 +429,7 @@ struct LogmoView_Preview: View {
                 }
             }
             
-            LogmoView(logmo: .shared)
+            LogmoView(.shared, settings: .init())
         }
     }
     
