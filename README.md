@@ -21,7 +21,7 @@ It can write logs using the 5-levels of logging (Debug, Info, Notice, Error, and
 ## Swift Package Manager
 ```swift
 dependencies: [
-    .package(url: "https://github.com/wlsdms0122/Logma.git", .upToNextMajor("1.1.0"))
+    .package(url: "https://github.com/wlsdms0122/Logma.git", .upToNextMajor("1.2.0"))
 ]
 ```
 
