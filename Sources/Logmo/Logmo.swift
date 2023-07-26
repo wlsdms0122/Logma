@@ -53,16 +53,29 @@ public class Logmo: ObservableObject {
     }
     
     public func setTitle(_ title: String) {
-        self.title = title
+        run { [weak self] in
+            self?.title = title
+        }
     }
     
     public func addLog(_ log: Log) {
-        logs.append(log)
+        run { [weak self] in
+            self?.logs.append(log)
+        }
     }
     
     public func clear() {
-        logs.removeAll()
+        run { [weak self] in
+            self?.logs.removeAll()
+        }
     }
     
     // MARK: - Private
+    private func run(_ action: @escaping () -> Void) {
+        Task {
+            await MainActor.run {
+                action()
+            }
+        }
+    }
 }
