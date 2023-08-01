@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 import Logma
 
+@MainActor
 public class Logmo: ObservableObject {
     // MARK: - Property
     public static let shared = Logmo()
@@ -52,30 +53,28 @@ public class Logmo: ObservableObject {
         window = nil
     }
     
-    public func setTitle(_ title: String) {
+    public nonisolated func setTitle(_ title: String = "") {
         run { [weak self] in
             self?.title = title
         }
     }
     
-    public func addLog(_ log: Log) {
+    public nonisolated func addLog(_ log: Log) {
         run { [weak self] in
             self?.logs.append(log)
         }
     }
     
-    public func clear() {
+    public nonisolated func clear() {
         run { [weak self] in
             self?.logs.removeAll()
         }
     }
     
     // MARK: - Private
-    private func run(_ action: @escaping () -> Void) {
+    private nonisolated func run(_ action: @MainActor @escaping () -> Void) {
         Task {
-            await MainActor.run {
-                action()
-            }
+            await action()
         }
     }
 }
