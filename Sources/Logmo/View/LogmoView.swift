@@ -24,13 +24,10 @@ struct LogmoView: View {
         VStack {
             VStack(spacing: 4) {
                 HeaderView()
-                if isExpand {
-                    ContentView()
-                        .transition(.slide)
-                }
+                ContentView()
+                    .opacity(isExpand ? 1 : 0)
             }
                 .padding(8)
-                .animation(.default, value: isExpand)
             
             Spacer()
         }
@@ -161,11 +158,11 @@ struct LogmoView: View {
                                 state = gesture.translation
                             }
                             .onEnded { gesture in
-                                contentHeight = min(max(contentHeight + gesture.translation.height, LogmoView.MINIMUM_CONTENT_HEIGHT), reader.size.height)
+                                logViewHeight = min(max(logViewHeight + gesture.translation.height, LogmoView.MINIMUM_LOG_VIEW_HEIGHT), reader.size.height)
                             }
                     )
             }
-                .frame(height: min(max(contentHeight + translation.height, LogmoView.MINIMUM_CONTENT_HEIGHT), reader.size.height))
+                .frame(height: min(max(logViewHeight + translation.height, LogmoView.MINIMUM_LOG_VIEW_HEIGHT), reader.size.height))
                 .background(
                     RoundedRectangle(cornerRadius: 8)
                         .foregroundColor(Color(hex: 0x262626, alpha: 0.6))
@@ -329,7 +326,7 @@ struct LogmoView: View {
     }
     
     // MARK: - Constant
-    private static let MINIMUM_CONTENT_HEIGHT: CGFloat = 150
+    private static let MINIMUM_LOG_VIEW_HEIGHT: CGFloat = 150
     private static let MINIMUM_SCROLL_THRESHOLD: CGFloat = 40
     
     // MARK: - Property
@@ -340,11 +337,11 @@ struct LogmoView: View {
     @State
     private var query: String = ""
     
-    // Content view size properties
+    // Log view size properties
     @GestureState
     private var translation: CGSize = .zero
     @State
-    private var contentHeight: CGFloat = LogmoView.MINIMUM_CONTENT_HEIGHT
+    private var logViewHeight: CGFloat = LogmoView.MINIMUM_LOG_VIEW_HEIGHT
     
     // Content view auto scrolling properties
     @State
