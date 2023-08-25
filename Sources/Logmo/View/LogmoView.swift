@@ -24,13 +24,10 @@ struct LogmoView: View {
         VStack {
             VStack(spacing: 4) {
                 HeaderView()
-                if isExpand {
-                    ContentView()
-                        .transition(.slide)
-                }
+                ContentView()
+                    .opacity(isExpand ? 1 : 0)
             }
                 .padding(8)
-                .animation(.default, value: isExpand)
             
             Spacer()
         }
