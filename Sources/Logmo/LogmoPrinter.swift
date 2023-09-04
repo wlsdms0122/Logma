@@ -22,7 +22,7 @@ public struct LogmoPrinter: Printer {
               let fileName = (userInfo[.fileName] as? NSString)?.lastPathComponent,
               let function = userInfo[.function] as? String,
               let line = userInfo[.line] as? Int else {
-            Swift.print("Default user info object went wrong!")
+            Logmo.shared.addLog(.init("Default user info object went wrong!", level: .error))
             return
         }
         
