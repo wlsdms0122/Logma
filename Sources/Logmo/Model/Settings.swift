@@ -23,8 +23,6 @@ class Settings: ObservableObject {
         }
     }
     
-    var customSectionContent: AnyView?
-    
     private let userDefaults: UserDefaults?
     
     // MARK: - Initializer

@@ -8,7 +8,7 @@
 import Logma
 import SwiftUI
 
-struct LogmoView: View {
+struct LogmoView<CustomSetting: View>: View {
     struct ScrollRect: Equatable {
         let scrollViewFrame: CGRect
         let contentViewFrame: CGRect
@@ -32,7 +32,12 @@ struct LogmoView: View {
             Spacer()
         }
             .sheet(isPresented: $isSettingPresented) {
-                SettingView(logmo, settings: settings) {
+                SettingView(
+                    settings,
+                    logmo: logmo
+                ) {
+                    customSettingContent
+                } onClose: {
                     Haptic.shared.impact(style: .rigid)
                     isSettingPresented = false
                 }
@@ -158,11 +163,11 @@ struct LogmoView: View {
                                 state = gesture.translation
                             }
                             .onEnded { gesture in
-                                logViewHeight = min(max(logViewHeight + gesture.translation.height, LogmoView.MINIMUM_LOG_VIEW_HEIGHT), reader.size.height)
+                                logViewHeight = min(max(logViewHeight + gesture.translation.height, MINIMUM_LOG_VIEW_HEIGHT), reader.size.height)
                             }
                     )
             }
-                .frame(height: min(max(logViewHeight + translation.height, LogmoView.MINIMUM_LOG_VIEW_HEIGHT), reader.size.height))
+                .frame(height: min(max(logViewHeight + translation.height, MINIMUM_LOG_VIEW_HEIGHT), reader.size.height))
                 .background(
                     RoundedRectangle(cornerRadius: 8)
                         .foregroundColor(Color(hex: 0x262626, alpha: 0.6))
@@ -266,7 +271,7 @@ struct LogmoView: View {
                             )
                             
                             Color.clear.onChange(of: scrollRect) { rects in
-                                let shouldAutoScroll = rects.contentViewFrame.maxY <= rects.scrollViewFrame.maxY + LogmoView.MINIMUM_SCROLL_THRESHOLD
+                                let shouldAutoScroll = rects.contentViewFrame.maxY <= rects.scrollViewFrame.maxY + MINIMUM_SCROLL_THRESHOLD
                                 
                                 guard shouldAutoScroll || !isAutoScrolling else { return }
                                 
@@ -326,8 +331,8 @@ struct LogmoView: View {
     }
     
     // MARK: - Constant
-    private static let MINIMUM_LOG_VIEW_HEIGHT: CGFloat = 150
-    private static let MINIMUM_SCROLL_THRESHOLD: CGFloat = 40
+    private let MINIMUM_LOG_VIEW_HEIGHT: CGFloat = 150
+    private let MINIMUM_SCROLL_THRESHOLD: CGFloat = 40
     
     // MARK: - Property
     @State
@@ -341,7 +346,7 @@ struct LogmoView: View {
     @GestureState
     private var translation: CGSize = .zero
     @State
-    private var logViewHeight: CGFloat = LogmoView.MINIMUM_LOG_VIEW_HEIGHT
+    private var logViewHeight: CGFloat = 150
     
     // Content view auto scrolling properties
     @State
@@ -356,11 +361,17 @@ struct LogmoView: View {
     private var logmo: Logmo
     @StateObject
     private var settings: Settings
+    private let customSettingContent: CustomSetting?
     
     // MARK: - Initializer
-    init(_ logmo: Logmo, settings: Settings) {
+    init(
+        _ logmo: Logmo,
+        settings: Settings,
+        @ViewBuilder customSetting content: () -> CustomSetting? = { Optional<EmptyView>.none }
+    ) {
         self._logmo = .init(wrappedValue: logmo)
         self._settings = .init(wrappedValue: settings)
+        self.customSettingContent = content()
     }
     
     // MARK: - Public
