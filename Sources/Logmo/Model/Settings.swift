@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class Settings: ObservableObject {
     // MARK: - Property
@@ -21,6 +22,8 @@ class Settings: ObservableObject {
             userDefaults?.set(showSearchBar, forKey: "showSearchBar")
         }
     }
+    
+    var customSectionContent: AnyView?
     
     private let userDefaults: UserDefaults?
     

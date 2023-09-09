@@ -12,6 +12,9 @@ struct SettingView: View {
     var body: some View {
         NavigationView {
             List {
+                if let content = settings.customSectionContent {
+                    CustomSection(content: content)
+                }
                 LayoutSection()
                 SettingSection()
                 AboutSection()
@@ -28,6 +31,15 @@ struct SettingView: View {
                         }
                     }
                 }
+        }
+    }
+    
+    @ViewBuilder
+    private func CustomSection(content: some View) -> some View {
+        Section {
+            content
+        } header: {
+            Text("Custom")
         }
     }
     

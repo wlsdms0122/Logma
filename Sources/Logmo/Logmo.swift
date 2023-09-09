@@ -53,6 +53,10 @@ public class Logmo: ObservableObject {
         window = nil
     }
     
+    public func configure(@ViewBuilder settings: () -> some View) {
+        self.settings.customSectionContent = AnyView(settings())
+    }
+    
     public nonisolated func setTitle(_ title: String = "") {
         run { [weak self] in
             self?.title = title
