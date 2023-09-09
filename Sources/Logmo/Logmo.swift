@@ -9,12 +9,9 @@ import UIKit
 import SwiftUI
 import Logma
 
-@MainActor
 public class Logmo: ObservableObject {
     // MARK: - Property
     public static let shared = Logmo()
-    
-    private var window: UIWindow?
     
     @Published
     private(set) var title: String = ""
@@ -22,11 +19,15 @@ public class Logmo: ObservableObject {
     private(set) var logs: [Log] = []
     
     private let settings = Settings()
+    private var customSettingContent: AnyView?
+    
+    private var window: UIWindow?
     
     // MARK: - Initializer
     private init() { }
     
     // MARK: - Public
+    @MainActor
     public func show() {
         let windowScene = UIApplication.shared.connectedScenes.filter {
             $0.activationState == .foregroundActive
@@ -37,7 +38,12 @@ public class Logmo: ObservableObject {
         guard let windowScene = windowScene else { return }
         
         let viewController = UIHostingController(
-            rootView: LogmoView(self, settings: settings)
+            rootView: LogmoView(
+                self,
+                settings: settings
+            ) {
+                customSettingContent
+            }
         )
         viewController.view.backgroundColor = .clear
         
@@ -48,31 +54,37 @@ public class Logmo: ObservableObject {
         self.window = window
     }
     
+    @MainActor
     public func hide() {
         window?.isHidden = true
         window = nil
     }
     
-    public nonisolated func setTitle(_ title: String = "") {
+    @MainActor
+    public func configure(@ViewBuilder setting content: () -> some View) {
+        self.customSettingContent = AnyView(content())
+    }
+    
+    public func setTitle(_ title: String = "") {
         run { [weak self] in
             self?.title = title
         }
     }
     
-    public nonisolated func addLog(_ log: Log) {
+    public func addLog(_ log: Log) {
         run { [weak self] in
             self?.logs.append(log)
         }
     }
     
-    public nonisolated func clear() {
+    public func clear() {
         run { [weak self] in
             self?.logs.removeAll()
         }
     }
     
     // MARK: - Private
-    private nonisolated func run(_ action: @MainActor @escaping () -> Void) {
+    private func run(_ action: @MainActor @escaping () -> Void) {
         Task {
             await action()
         }

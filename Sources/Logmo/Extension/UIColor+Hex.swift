@@ -8,10 +8,10 @@ import UIKit
 
 public extension UIColor {
     convenience init(
-        @Range(0...255) red: Int,
-        @Range(0...255) green: Int,
-        @Range(0...255) blue: Int,
-        @Range(0...1) alpha: CGFloat = 1
+        @Clamp(0...255) red: Int,
+        @Clamp(0...255) green: Int,
+        @Clamp(0...255) blue: Int,
+        @Clamp(0...1) alpha: CGFloat = 1
     ) {
         self.init(
             red: CGFloat(red) / 255,

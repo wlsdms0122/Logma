@@ -112,6 +112,11 @@ You can configure `Logmo` by setting the title and adding logs:
 Logmo.shared.setTitle("title")
 // Add a log to Logmo.
 Logmo.shared.addLog(Log("log message", level: .debug))
+// Add the custom setting menu for own.
+Logmo.shared.configure {
+    Toggle("Toggle Custom Setting", isOn: ...)
+    ...
+}
 ```
 
 After understanding the default usages, the most important thing is to integrate `Logmo` with `Logma` using a `Printer`.

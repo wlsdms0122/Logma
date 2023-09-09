@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class Settings: ObservableObject {
     // MARK: - Property

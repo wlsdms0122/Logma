@@ -7,11 +7,14 @@
 
 import SwiftUI
 
-struct SettingView: View {
+struct SettingView<CustomContent: View>: View {
     // MARK: - View
     var body: some View {
         NavigationView {
             List {
+                if let content = customSettingContent {
+                    CustomSection(content: content)
+                }
                 LayoutSection()
                 SettingSection()
                 AboutSection()
@@ -28,6 +31,15 @@ struct SettingView: View {
                         }
                     }
                 }
+        }
+    }
+    
+    @ViewBuilder
+    private func CustomSection(content: some View) -> some View {
+        Section {
+            content
+        } header: {
+            Text("Custom")
         }
     }
     
@@ -127,16 +139,24 @@ struct SettingView: View {
     private var isShowCleanAllLogsAlert: Bool = false
     
     @StateObject
-    private var logmo: Logmo
-    @StateObject
     private var settings: Settings
+    @StateObject
+    private var logmo: Logmo
+    
+    private let customSettingContent: CustomContent?
     
     private let onClose: () -> Void
     
     // MARK: - Initializer
-    init(_ logmo: Logmo, settings: Settings, onClose: @escaping () -> Void) {
-        self._logmo = .init(wrappedValue: logmo)
+    init(
+        _ settings: Settings,
+        logmo: Logmo,
+        @ViewBuilder customSetting content: () -> CustomContent? = { Optional<EmptyView>.none },
+        onClose: @escaping () -> Void
+    ) {
         self._settings = .init(wrappedValue: settings)
+        self._logmo = .init(wrappedValue: logmo)
+        self.customSettingContent = content()
         self.onClose = onClose
     }
     
@@ -148,7 +168,7 @@ struct SettingView: View {
 #if DEBUG
 struct SettingView_Preview: View {
     var body: some View {
-        SettingView(.shared, settings: .init()) { }
+        SettingView(.init(), logmo: .shared, onClose: { })
     }
 }
 
