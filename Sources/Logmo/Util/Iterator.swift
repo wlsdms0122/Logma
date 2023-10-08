@@ -1,5 +1,5 @@
 //
-//  Enumerator.swift
+//  Iterator.swift
 //
 //
 //  Created by JSilver on 2023/03/23.
@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-public struct Enumerator<Data, Content: View>: View {
+struct Iterator<Data, Content: View>: View {
     // MARK: - View
-    public var body: some View {
+    var body: some View {
         let views = data.enumerated().map { content($0, $1) }
         ForEach(0..<views.count, id: \.self) {
             views[$0]
@@ -21,7 +21,7 @@ public struct Enumerator<Data, Content: View>: View {
     private let content: (Int, Data) -> Content
     
     // MARK: - Initializer
-    public init(
+    init(
         _ data: [Data],
         @ViewBuilder content: @escaping (Int, Data) -> Content
     ) {

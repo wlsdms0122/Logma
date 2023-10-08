@@ -258,7 +258,7 @@ struct LogmoView<CustomSetting: View>: View {
         GeometryReader { scrollViewReader in
             ScrollView {
                 LazyVStack(spacing: 4) {
-                    Enumerator(logs) { index, log in
+                    Iterator(logs) { index, log in
                         LogView(log).id(index)
                     }
                 }
