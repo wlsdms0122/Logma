@@ -18,6 +18,9 @@ public class Logmo: ObservableObject {
     @Published
     private(set) var logs: [Log] = []
     
+    @Published
+    private(set) var isExporting: Bool = false
+    
     private let settings = Settings()
     private var customSettingContent: AnyView?
     
@@ -65,6 +68,31 @@ public class Logmo: ObservableObject {
         self.customSettingContent = AnyView(content())
     }
     
+    @MainActor
+    public func export() {
+        guard !isExporting else { return }
+        
+        isExporting = true
+        
+        Task { [weak self] in
+            guard let file = await try? LogFile(logs) else {
+                self?.isExporting = false
+                return
+            }
+            
+            let viewController = UIActivityViewController(
+                activityItems: [LogItemSource(file)],
+                applicationActivities: nil
+            )
+            viewController.popoverPresentationController?.sourceView = self?.topMostViewController()?.view
+            viewController.completionWithItemsHandler = { [weak self] activityType, completed, returnedItems, error in
+                self?.isExporting = false
+            }
+            
+            self?.topMostViewController()?.present(viewController, animated: true)
+        }
+    }
+    
     public func setTitle(_ title: String = "") {
         run { [weak self] in
             self?.title = title
@@ -88,5 +116,15 @@ public class Logmo: ObservableObject {
         Task {
             await action()
         }
+    }
+    
+    private func topMostViewController() -> UIViewController? {
+        var viewController = window?.rootViewController
+        
+        while let childViewController = viewController?.presentedViewController {
+            viewController = childViewController
+        }
+        
+        return viewController
     }
 }

@@ -65,6 +65,21 @@ struct SettingView<CustomContent: View>: View {
     private func SettingSection() -> some View {
         Section {
             Item(
+                symbol: "square.and.arrow.up",
+                title: "Export Logs"
+            ) {
+                Button {
+                    logmo.export()
+                } label: {
+                    if logmo.isExporting {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                    } else {
+                        EmptyView()
+                    }
+                }
+            }
+            Item(
                 symbol: "trash",
                 title: "Clean All Logs"
             ) {
