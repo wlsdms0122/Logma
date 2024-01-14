@@ -38,7 +38,7 @@ struct LogmoView<CustomSetting: View>: View {
                 ) {
                     customSettingContent
                 } onClose: {
-                    Haptic.shared.impact(style: .rigid)
+                    Haptic.impact(style: .rigid)
                     isSettingPresented = false
                 }
             }
@@ -61,7 +61,7 @@ struct LogmoView<CustomSetting: View>: View {
     @ViewBuilder
     private func SettingButton() -> some View {
         Button {
-            Haptic.shared.impact(style: .rigid)
+            Haptic.impact(style: .rigid)
             isSettingPresented = true
         } label: {
             Image(systemName: "line.3.horizontal")
@@ -93,7 +93,7 @@ struct LogmoView<CustomSetting: View>: View {
             : "square.split.bottomrightquarter"
         
         Button {
-            Haptic.shared.impact(style: .rigid)
+            Haptic.impact(style: .rigid)
             isExpand.toggle()
         } label: {
             Image(systemName: imageName)
@@ -192,7 +192,7 @@ struct LogmoView<CustomSetting: View>: View {
         let backgroundColor: Color = containsLevel ? logColor(level: level) : Color(hex: 0x454545)
         
         Button {
-            Haptic.shared.impact(style: .rigid)
+            Haptic.impact(style: .rigid)
             
             if containsLevel {
                 levelFilter.remove(level)
@@ -234,7 +234,7 @@ struct LogmoView<CustomSetting: View>: View {
             
             if !query.isEmpty {
                 Button {
-                    Haptic.shared.impact(style: .rigid)
+                    Haptic.impact(style: .rigid)
                     query = ""
                 } label: {
                     Image(systemName: "xmark.circle.fill")
@@ -380,38 +380,38 @@ struct LogmoView<CustomSetting: View>: View {
     private func logTitle(level: Logma.Level) -> String {
         switch level {
         case .debug:
-            return "DEBUG"
+            "DEBUG"
             
         case .info:
-            return "INFO"
+            "INFO"
             
         case .notice:
-            return "NOTICE"
+            "NOTICE"
             
         case .error:
-            return "ERROR"
+            "ERROR"
             
         case .fault:
-            return "FAULT"
+            "FAULT"
         }
     }
     
     private func logColor(level: Logma.Level) -> Color {
         switch level {
         case .debug:
-            return Color(hex: 0x989898)
+            Color(hex: 0x989898)
             
         case .info:
-            return Color(hex: 0x52A3EE)
+            Color(hex: 0x52A3EE)
             
         case .notice:
-            return Color(hex: 0xEDDD52)
+            Color(hex: 0xEDDD52)
             
         case .error:
-            return Color(hex: 0xE3953A)
+            Color(hex: 0xE3953A)
             
         case .fault:
-            return Color(hex: 0xF03C3C)
+            Color(hex: 0xF03C3C)
         }
     }
 }
