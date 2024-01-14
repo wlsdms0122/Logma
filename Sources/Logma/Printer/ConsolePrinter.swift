@@ -40,19 +40,19 @@ public struct ConsolePrinter: Printer {
     private func marker(from level: Logma.Level) -> String {
         switch level {
         case .debug:
-            return "🟢"
+            "🟢"
             
         case .info:
-            return "🔵"
+            "🔵"
             
         case .notice:
-            return "🟡"
+            "🟡"
             
         case .error:
-            return "🟠"
+            "🟠"
             
         case .fault:
-            return "🔴"
+            "🔴"
         }
     }
 }

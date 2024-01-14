@@ -380,38 +380,38 @@ struct LogmoView<CustomSetting: View>: View {
     private func logTitle(level: Logma.Level) -> String {
         switch level {
         case .debug:
-            return "DEBUG"
+            "DEBUG"
             
         case .info:
-            return "INFO"
+            "INFO"
             
         case .notice:
-            return "NOTICE"
+            "NOTICE"
             
         case .error:
-            return "ERROR"
+            "ERROR"
             
         case .fault:
-            return "FAULT"
+            "FAULT"
         }
     }
     
     private func logColor(level: Logma.Level) -> Color {
         switch level {
         case .debug:
-            return Color(hex: 0x989898)
+            Color(hex: 0x989898)
             
         case .info:
-            return Color(hex: 0x52A3EE)
+            Color(hex: 0x52A3EE)
             
         case .notice:
-            return Color(hex: 0xEDDD52)
+            Color(hex: 0xEDDD52)
             
         case .error:
-            return Color(hex: 0xE3953A)
+            Color(hex: 0xE3953A)
             
         case .fault:
-            return Color(hex: 0xF03C3C)
+            Color(hex: 0xF03C3C)
         }
     }
 }
