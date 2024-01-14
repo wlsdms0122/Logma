@@ -38,7 +38,7 @@ struct LogmoView<CustomSetting: View>: View {
                 ) {
                     customSettingContent
                 } onClose: {
-                    Haptic.shared.impact(style: .rigid)
+                    Haptic.impact(style: .rigid)
                     isSettingPresented = false
                 }
             }
@@ -61,7 +61,7 @@ struct LogmoView<CustomSetting: View>: View {
     @ViewBuilder
     private func SettingButton() -> some View {
         Button {
-            Haptic.shared.impact(style: .rigid)
+            Haptic.impact(style: .rigid)
             isSettingPresented = true
         } label: {
             Image(systemName: "line.3.horizontal")
@@ -93,7 +93,7 @@ struct LogmoView<CustomSetting: View>: View {
             : "square.split.bottomrightquarter"
         
         Button {
-            Haptic.shared.impact(style: .rigid)
+            Haptic.impact(style: .rigid)
             isExpand.toggle()
         } label: {
             Image(systemName: imageName)
@@ -192,7 +192,7 @@ struct LogmoView<CustomSetting: View>: View {
         let backgroundColor: Color = containsLevel ? logColor(level: level) : Color(hex: 0x454545)
         
         Button {
-            Haptic.shared.impact(style: .rigid)
+            Haptic.impact(style: .rigid)
             
             if containsLevel {
                 levelFilter.remove(level)
@@ -234,7 +234,7 @@ struct LogmoView<CustomSetting: View>: View {
             
             if !query.isEmpty {
                 Button {
-                    Haptic.shared.impact(style: .rigid)
+                    Haptic.impact(style: .rigid)
                     query = ""
                 } label: {
                     Image(systemName: "xmark.circle.fill")
