@@ -62,7 +62,7 @@ final class LogFile {
         self.logs = logs
         self.url = url
         
-        await try createFile()
+        try await createFile()
     }
     
     // MARK: - Public
