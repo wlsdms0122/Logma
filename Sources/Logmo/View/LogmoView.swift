@@ -417,7 +417,7 @@ struct LogmoView<CustomSetting: View>: View {
 }
 
 #if DEBUG
-struct LogmoView_Preview: View {
+private struct Preview: View {
     // MARK: - View
     var body: some View {
         ZStack {
@@ -518,9 +518,7 @@ struct LogmoView_Preview: View {
     }
 }
 
-struct LogmoView_Previews: PreviewProvider {
-    static var previews: some View {
-        LogmoView_Preview()
-    }
+#Preview {
+    Preview()
 }
 #endif

@@ -181,15 +181,16 @@ struct SettingView<CustomContent: View>: View {
 }
 
 #if DEBUG
-struct SettingView_Preview: View {
+private struct Preview: View {
     var body: some View {
-        SettingView(.init(), logmo: .shared, onClose: { })
+        SettingView(
+            .init(),
+            logmo: .shared
+        ) { }
     }
 }
 
-struct SettingView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingView_Preview()
-    }
+#Preview {
+    Preview()
 }
 #endif
