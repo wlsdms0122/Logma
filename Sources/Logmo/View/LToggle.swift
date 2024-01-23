@@ -23,17 +23,20 @@ struct LToggle: View {
                 if isOn {
                     Spacer()
                 }
+                
                 Circle()
                     .foregroundColor(.white)
                     .shadow(color: .black.opacity(0.04), radius: 1)
                     .shadow(color: .black.opacity(0.15), radius: 8, y: 3)
                     .shadow(color: .black.opacity(0.06), radius: 1, y: 3)
+                    .frame(width: 27, height: 27)
+                    .padding(2)
+                
                 if !isOn {
                     Spacer()
                 }
             }
-            .padding(2)
-            .animation(.spring(response: 0.3, dampingFraction: 0.75), value: isOn)
+                .animation(.spring(response: 0.3, dampingFraction: 0.75), value: isOn)
         }
             .frame(width: 51, height: 31)
             .onTapGesture {
