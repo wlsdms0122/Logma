@@ -75,7 +75,7 @@ public class Logmo: ObservableObject {
         isExporting = true
         
         Task { [weak self] in
-            guard let file = try? await LogFile(logs) else {
+            guard let logs = self?.logs, let file = try? await LogFile(logs) else {
                 self?.isExporting = false
                 return
             }
