@@ -69,9 +69,11 @@ struct SettingView<CustomContent: View>: View {
                 title: "Export Logs"
             ) {
                 Button {
-                    logmo.export()
+                    Task {
+                        await settings.export()
+                    }
                 } label: {
-                    if logmo.isExporting {
+                    if settings.isExporting {
                         ProgressView()
                             .progressViewStyle(.circular)
                     } else {
@@ -95,7 +97,7 @@ struct SettingView<CustomContent: View>: View {
                         message: Text("Are you sure you want to clean all logs?"),
                         primaryButton: .cancel(),
                         secondaryButton: .destructive(Text("Clean")) {
-                            logmo.clear()
+                            settings.clear()
                         }
                     )
                 }
@@ -155,8 +157,6 @@ struct SettingView<CustomContent: View>: View {
     
     @StateObject
     private var settings: Settings
-    @StateObject
-    private var logmo: Logmo
     
     private let customSettingContent: CustomContent?
     
@@ -165,12 +165,10 @@ struct SettingView<CustomContent: View>: View {
     // MARK: - Initializer
     init(
         _ settings: Settings,
-        logmo: Logmo,
         @ViewBuilder customSetting content: () -> CustomContent? = { Optional<EmptyView>.none },
         onClose: @escaping () -> Void
     ) {
         self._settings = .init(wrappedValue: settings)
-        self._logmo = .init(wrappedValue: logmo)
         self.customSettingContent = content()
         self.onClose = onClose
     }
@@ -183,10 +181,7 @@ struct SettingView<CustomContent: View>: View {
 #if DEBUG
 private struct Preview: View {
     var body: some View {
-        SettingView(
-            .init(),
-            logmo: .shared
-        ) { }
+        SettingView(.init()) { }
     }
 }
 

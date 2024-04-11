@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class LogFile {
+struct LogFile {
     private struct Environment: CustomStringConvertible {
         private var info: [String: Any] { Bundle.main.infoDictionary ?? [:] }
         
@@ -45,35 +45,41 @@ final class LogFile {
     }
     
     // MARK: - Property
-    private static let fileName = "%@.log"
-    
     private let logs: [Log]
     let url: URL
+    private let convert: (Log) -> String
     
     // MARK: - Initializer
-    init(_ logs: [Log]) async throws {
-        // Create a log file in a temporary directory.
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HHmmss"
-        
-        let path = String(format: LogFile.fileName, dateFormatter.string(from: Date()))
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent(path, conformingTo: .log)
-        
+    init(_ logs: [Log], path url: URL, convert: ((Log) -> String)? = nil) {
         self.logs = logs
         self.url = url
-        
-        try await createFile()
+        self.convert = convert ?? { log in
+            switch log.level {
+            case .debug:
+                "🟢 \(log.message)"
+                
+            case .info:
+                "🔵 \(log.message)"
+                
+            case .notice:
+                "🟡 \(log.message)"
+                
+            case .error:
+                "🟠 \(log.message)"
+                
+            case .fault:
+                "🔴 \(log.message)"
+            }
+        }
     }
     
     // MARK: - Public
-    
-    // MARK: - Private
-    private func createFile() async throws {
-        let logMessages = logs.map { log in logMessage(log) }
+    func create() throws {
+        let messages = logs.map(convert)
             .joined(separator: "\n")
         
         let content: String = """
-        \(logMessages)
+        \(messages)
         
         \(Environment())
         """
@@ -81,31 +87,9 @@ final class LogFile {
         try content.write(to: url, atomically: false, encoding: .utf8)
     }
     
-    private func removeFile() {
-        try? FileManager.default.removeItem(at: url)
+    func remove() throws {
+        try FileManager.default.removeItem(at: url)
     }
     
-    private func logMessage(_ log: Log) -> String {
-        switch log.level {
-        case .debug:
-            "🟢 \(log.message)"
-            
-        case .info:
-            "🔵 \(log.message)"
-            
-        case .notice:
-            "🟡 \(log.message)"
-            
-        case .error:
-            "🟠 \(log.message)"
-            
-        case .fault:
-            "🔴 \(log.message)"
-        }
-    }
-    
-    deinit {
-        // Remove the generated log file.
-        removeFile()
-    }
+    // MARK: - Private
 }

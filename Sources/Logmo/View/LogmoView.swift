@@ -32,11 +32,8 @@ struct LogmoView<CustomSetting: View>: View {
             Spacer()
         }
             .sheet(isPresented: $isSettingPresented) {
-                SettingView(
-                    settings,
-                    logmo: logmo
-                ) {
-                    customSettingContent
+                SettingView(settings) {
+                    customSettingContent()
                 } onClose: {
                     Haptic.impact(style: .rigid)
                     isSettingPresented = false
@@ -75,7 +72,7 @@ struct LogmoView<CustomSetting: View>: View {
     
     @ViewBuilder
     private func Title() -> some View {
-        Text(logmo.title)
+        Text(settings.title)
             .font(.system(size: 10, weight: .light))
             .foregroundColor(Color(hex: 0xFFFFFF))
             .frame(height: 20)
@@ -107,7 +104,7 @@ struct LogmoView<CustomSetting: View>: View {
     
     @ViewBuilder
     private func ContentView() -> some View {
-        let logs = logmo.logs.filter { levelFilter.contains($0.level) }
+        let logs = settings.logs.filter { levelFilter.contains($0.level) }
             .filter { query.isEmpty || $0.message.contains(query) }
         let lastItemID = logs.count - 1
         
@@ -358,20 +355,17 @@ struct LogmoView<CustomSetting: View>: View {
     private var isSettingPresented: Bool = false
     
     @StateObject
-    private var logmo: Logmo
-    @StateObject
     private var settings: Settings
-    private let customSettingContent: CustomSetting?
+    
+    private let customSettingContent: () -> CustomSetting?
     
     // MARK: - Initializer
     init(
-        _ logmo: Logmo,
         settings: Settings,
-        @ViewBuilder customSetting content: () -> CustomSetting? = { Optional<EmptyView>.none }
+        @ViewBuilder customSetting content: @escaping () -> CustomSetting? = { Optional<EmptyView>.none }
     ) {
-        self._logmo = .init(wrappedValue: logmo)
         self._settings = .init(wrappedValue: settings)
-        self.customSettingContent = content()
+        self.customSettingContent = content
     }
     
     // MARK: - Public
@@ -437,7 +431,7 @@ private struct Preview: View {
                 }
             }
             
-            LogmoView(.shared, settings: .init())
+            LogmoView(settings: .init())
         }
     }
     
