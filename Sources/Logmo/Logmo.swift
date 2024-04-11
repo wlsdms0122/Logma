@@ -72,6 +72,28 @@ public class Logmo: Sendable {
         }
     }
     
+    @MainActor
+    public func save(fileName: String? = nil) {
+        let path = {
+            if let fileName {
+                return fileName
+            }
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyyMMdd_HHmmss"
+            
+            return String(format: "%@.log", dateFormatter.string(from: Date()))
+        }()
+        
+        guard let url = FileManager.default
+            .urls(for: .documentDirectory, in: .userDomainMask)
+            .first?
+            .appendingPathComponent(path, conformingTo: .log)
+        else { return }
+        
+        let file = LogFile(settings.logs, path: url)
+        
+        try? file.create()
     }
     
     // MARK: - Private
