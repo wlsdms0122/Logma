@@ -12,6 +12,7 @@ protocol SettingsDelegate: AnyObject {
     func settings(_ settings: Settings, export file: LogFile) async
 }
 
+@MainActor
 class Settings: ObservableObject {
     private static let settingSuite = "logmo"
     
@@ -65,22 +66,18 @@ class Settings: ObservableObject {
     }
     
     // MARK: - Public
-    @MainActor
     func setTitle(_ title: String = "") {
         self.title = title
     }
     
-    @MainActor
     func addLog(_ log: Log) {
         logs.append(log)
     }
     
-    @MainActor
     func clear() {
         logs.removeAll()
     }
     
-    @MainActor
     func export() async {
         guard !isExporting else { return }
         

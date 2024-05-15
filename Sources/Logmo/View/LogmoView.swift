@@ -446,7 +446,9 @@ private struct Preview: View {
             .cornerRadius(4)
             .padding(16)
             .onChange(of: title) { title in
-                Logmo.shared.setTitle(title)
+                Task {
+                    await Logmo.shared.setTitle(title)
+                }
             }
     }
     
