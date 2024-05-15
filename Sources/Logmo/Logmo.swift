@@ -9,7 +9,8 @@ import UIKit
 import SwiftUI
 import Logma
 
-public class Logmo: Sendable {
+@MainActor
+public class Logmo {
     // MARK: - Property
     public static let shared = Logmo()
     
@@ -19,14 +20,13 @@ public class Logmo: Sendable {
     private var window: UIWindow?
     
     // MARK: - Initializer
-    private init() { 
+    private init() {
         self.settings = Settings()
         
         settings.delegate = self
     }
     
     // MARK: - Public
-    @MainActor
     public func show() {
         let windowScene = UIApplication.shared.connectedScenes.filter {
             $0.activationState == .foregroundActive
@@ -50,7 +50,6 @@ public class Logmo: Sendable {
         self.window = window
     }
     
-    @MainActor
     public func hide() {
         window?.isHidden = true
         window = nil
@@ -59,20 +58,16 @@ public class Logmo: Sendable {
     public func configure(@ViewBuilder customSetting content: () -> some View) {
         customSettingContent = AnyView(content())
     }
+
     
     public func setTitle(_ title: String = "") {
-        Task { [weak self] in
-            await self?.settings.setTitle(title)
-        }
+        settings.setTitle(title)
     }
     
     public func addLog(_ log: Log) {
-        Task { [weak self] in
-            await self?.settings.addLog(log)
-        }
+        settings.addLog(log)
     }
     
-    @MainActor
     public func save(fileName: String? = nil) {
         let path = {
             if let fileName {
@@ -109,7 +104,6 @@ public class Logmo: Sendable {
 }
 
 extension Logmo: SettingsDelegate {
-    @MainActor
     func settings(_ settings: Settings, export file: LogFile) async {
         await withCheckedContinuation { continuation in
             let viewController = UIActivityViewController(
@@ -117,7 +111,7 @@ extension Logmo: SettingsDelegate {
                 applicationActivities: nil
             )
             viewController.popoverPresentationController?.sourceView = topMostViewController()?.view
-            viewController.completionWithItemsHandler = { [weak self] activityType, completed, returnedItems, error in
+            viewController.completionWithItemsHandler = { activityType, completed, returnedItems, error in
                 continuation.resume()
             }
             
