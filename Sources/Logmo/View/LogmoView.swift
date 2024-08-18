@@ -104,7 +104,7 @@ struct LogmoView<CustomSetting: View>: View {
     
     @ViewBuilder
     private func ContentView() -> some View {
-        let logs = settings.logs.filter { levelFilter.contains($0.level) }
+        let logs = settings.filteredLogs.filter { levelFilter.contains($0.level) }
             .filter { query.isEmpty || $0.message.contains(query) }
         let lastItemID = logs.count - 1
         

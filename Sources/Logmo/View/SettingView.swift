@@ -65,6 +65,16 @@ struct SettingView<CustomContent: View>: View {
     private func SettingSection() -> some View {
         Section {
             Item(
+                symbol: "line.3.horizontal.decrease.circle",
+                title: "Log Filter"
+            ) {
+                NavigationLink {
+                    LogFilterView(settings)
+                } label: {
+                    EmptyView()
+                }
+            }
+            Item(
                 symbol: "square.and.arrow.up",
                 title: "Export Logs"
             ) {
@@ -117,6 +127,7 @@ struct SettingView<CustomContent: View>: View {
                     guard let url = Env.licenseURL else { return }
                     UIApplication.shared.open(url)
                 }
+                    .foregroundColor(.secondary.opacity(0.6))
             }
         } header: {
             Text("About")
@@ -147,7 +158,6 @@ struct SettingView<CustomContent: View>: View {
             Text(title)
             Spacer()
             label()
-                .foregroundColor(.secondary.opacity(0.6))
         }
     }
     

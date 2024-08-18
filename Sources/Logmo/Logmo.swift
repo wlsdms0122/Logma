@@ -15,7 +15,7 @@ public class Logmo {
     public static let shared = Logmo()
     
     private let settings: Settings
-    private var customSettingContent: AnyView?
+    private var customSetting: () -> AnyView = { AnyView(EmptyView()) }
     
     private var window: UIWindow?
     
@@ -38,7 +38,7 @@ public class Logmo {
         
         let viewController = UIHostingController(
             rootView: LogmoView(settings: settings) { [weak self] in
-                self?.customSettingContent
+                self?.customSetting()
             }
         )
         viewController.view.backgroundColor = .clear
@@ -55,10 +55,9 @@ public class Logmo {
         window = nil
     }
     
-    public func configure(@ViewBuilder customSetting content: () -> some View) {
-        customSettingContent = AnyView(content())
+    public func configure<CustomSetting: View>(@ViewBuilder customSetting content: @escaping () -> CustomSetting?) {
+        customSetting = { AnyView(content()) }
     }
-
     
     public func setTitle(_ title: String = "") {
         settings.setTitle(title)
