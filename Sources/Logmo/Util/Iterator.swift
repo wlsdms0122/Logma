@@ -10,9 +10,8 @@ import SwiftUI
 struct Iterator<Data, Content: View>: View {
     // MARK: - View
     var body: some View {
-        let views = data.enumerated().map { content($0, $1) }
-        ForEach(0..<views.count, id: \.self) {
-            views[$0]
+        ForEach(Array(data.enumerated()), id: \.offset) { offset, data in
+            content(offset, data)
         }
     }
     
@@ -23,7 +22,7 @@ struct Iterator<Data, Content: View>: View {
     // MARK: - Initializer
     init(
         _ data: [Data],
-        @ViewBuilder content: @escaping (Int, Data) -> Content
+        @ViewBuilder content: @escaping (_ offset: Int, _ data: Data) -> Content
     ) {
         self.data = data
         self.content = content
