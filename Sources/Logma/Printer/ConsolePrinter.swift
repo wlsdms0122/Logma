@@ -9,6 +9,11 @@ import Foundation
 
 public struct ConsolePrinter: Printer {
     // MARK: - Property
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter
+    }()
     
     // MARK: - Initiailzer
     public init() {
@@ -17,7 +22,7 @@ public struct ConsolePrinter: Printer {
     
     // MARK: - Lifecycle
     public func print(_ message: Any, userInfo: [Logma.Key: Any], level: Logma.Level) {
-        guard let date = userInfo[.date] as? String,
+        guard let date = userInfo[.date] as? Date,
               let fileName = (userInfo[.fileName] as? NSString)?.lastPathComponent,
               let function = userInfo[.function] as? String,
               let line = userInfo[.line] as? Int else {
@@ -26,7 +31,7 @@ public struct ConsolePrinter: Printer {
         }
         
         let marker = marker(from: level)
-        var log = "\(marker) \(date) \(fileName)/\(function)/\(line) "
+        var log = "\(marker) \(dateFormatter.string(from: date)) \(fileName)/\(function)/\(line) "
         if let category = userInfo[.category] as? String, !category.isEmpty {
             log.append("[\(category)] ")
         }

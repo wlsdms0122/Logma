@@ -7,20 +7,15 @@
 
 import SwiftUI
 
-struct SettingView<CustomContent: View>: View {
+struct SettingView: View {
     // MARK: - View
     var body: some View {
         NavigationView {
             List {
-                if let content = customSettingContent {
-                    CustomSection(content: content)
-                }
-                LayoutSection()
                 SettingSection()
                 AboutSection()
             }
                 .navigationTitle("Setting")
-                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
@@ -35,48 +30,11 @@ struct SettingView<CustomContent: View>: View {
     }
     
     @ViewBuilder
-    private func CustomSection(content: some View) -> some View {
-        Section {
-            content
-        } header: {
-            Text("Custom")
-        }
-    }
-    
-    @ViewBuilder
-    private func LayoutSection() -> some View {
-        Section {
-            Switch(
-                symbol: "line.3.horizontal.decrease.circle",
-                title: "Show Level Filters",
-                isOn: $settings.showFilters
-            )
-            Switch(
-                symbol: "magnifyingglass",
-                title: "Show Search Bar",
-                isOn: $settings.showSearchBar
-            )
-        } header: {
-            Text("Layout")
-        }
-    }
-    
-    @ViewBuilder
     private func SettingSection() -> some View {
         Section {
             Item(
-                symbol: "line.3.horizontal.decrease.circle",
-                title: "Log Filter"
-            ) {
-                NavigationLink {
-                    LogFilterView(settings)
-                } label: {
-                    EmptyView()
-                }
-            }
-            Item(
                 symbol: "square.and.arrow.up",
-                title: "Export Logs"
+                title: "Export"
             ) {
                 Button {
                     Task {
@@ -112,7 +70,7 @@ struct SettingView<CustomContent: View>: View {
                     )
                 }
         } header: {
-            Text("Setting")
+            Text("LOGS")
         }
     }
     
@@ -132,17 +90,6 @@ struct SettingView<CustomContent: View>: View {
         } header: {
             Text("About")
         }
-    }
-    
-    @ViewBuilder
-    private func Switch(
-        symbol name: String? = nil,
-        title: String,
-        isOn: Binding<Bool>
-    ) -> some View {
-        Item(symbol: name, title: title, label: {
-            LToggle(isOn: isOn)
-        })
     }
     
     @ViewBuilder
@@ -168,18 +115,14 @@ struct SettingView<CustomContent: View>: View {
     @StateObject
     private var settings: Settings
     
-    private let customSettingContent: CustomContent?
-    
     private let onClose: () -> Void
     
     // MARK: - Initializer
     init(
         _ settings: Settings,
-        @ViewBuilder customSetting content: () -> CustomContent? = { Optional<EmptyView>.none },
         onClose: @escaping () -> Void
     ) {
         self._settings = .init(wrappedValue: settings)
-        self.customSettingContent = content()
         self.onClose = onClose
     }
     

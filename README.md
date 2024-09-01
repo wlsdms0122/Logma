@@ -10,7 +10,6 @@ It can write logs using the 5-levels of logging (Debug, Info, Notice, Error, and
   - [Swift Package Manager](#swift-package-manager)
 - [Getting Started](#getting-started)
   - [Custom Printer](#custom-printer)
-  - [Logmo](#logmo)
 - [Contribution](#contribution)
 - [License](#license)
 
@@ -93,40 +92,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 ```
 
-## Logmo
-<image src="https://github.com/wlsdms0122/Compose/assets/11141077/b199f8a8-2912-4ebc-b58e-05995015d3ea" width=300 />
-
-`Logmo` is an iOS runtime log viewer. It's a simple log viewer with log level filters.
-
-You can use Logmo as a standalone tool:
-```swift
-// Show the Logmo window.
-Logmo.shared.show()
-// Hide the Logmo window.
-Logmo.shared.hide()
-```
-
-You can configure `Logmo` by setting the title and adding logs:
-```swift
-// Set the Logmo window title.
-Logmo.shared.setTitle("title")
-// Add a log to Logmo.
-Logmo.shared.addLog(Log("log message", level: .debug))
-// Add the custom setting menu for own.
-Logmo.shared.configure {
-    Toggle("Toggle Custom Setting", isOn: ...)
-    ...
-}
-```
-
-After understanding the default usages, the most important thing is to integrate `Logmo` with `Logma` using a `Printer`.
-
-`Logmo` provides a default `LogmoPrinter`, but if you want to customize the log message, you can define your own `Printer`.
-
-> Logmo is a WIP project. The UI/UX functionality will be gradually improved.
-
 # Contribution
 Any ideas, issues, opinions are welcome.
 
 # License
-`Logmo` is available under the MIT license. See the LICENSE file for more info.
+`Logma` is available under the MIT license. See the LICENSE file for more info.

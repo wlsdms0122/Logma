@@ -18,7 +18,7 @@ public struct Logma {
         public static var subsystem: Key { .init(rawValue: "subsystem") }
         public static var category: Key { .init(rawValue: "category") }
         
-        private let rawValue: RawValue
+        public let rawValue: RawValue
         
         public init(rawValue: RawValue) {
             self.rawValue = rawValue
@@ -34,12 +34,6 @@ public struct Logma {
     }
     
     // MARK: - Property
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return formatter
-    }()
-    
     private static var printers: [Printer] = []
     
     // MARK: - Initializer
@@ -143,7 +137,7 @@ public struct Logma {
         level: Level
     ) {
         let info: [Key: Any] = [
-            .date: dateFormatter.string(from: Date()),
+            .date: Date(),
             .fileName: file,
             .function: function,
             .line: line
