@@ -15,9 +15,9 @@ public class Logmo {
     public static let shared = Logmo()
     
     private let settings: Settings
-    private var customSetting: () -> AnyView = { AnyView(EmptyView()) }
     
     private var window: UIWindow?
+    public private(set) var viewController: UIViewController?
     
     // MARK: - Initializer
     private init() {
@@ -27,7 +27,7 @@ public class Logmo {
     }
     
     // MARK: - Public
-    public func show() {
+    public func show<Actions: View>(@ViewBuilder actions: () -> Actions = { EmptyView() }) {
         let windowScene = UIApplication.shared.connectedScenes.filter {
             $0.activationState == .foregroundActive
         }
@@ -37,9 +37,7 @@ public class Logmo {
         guard let windowScene = windowScene else { return }
         
         let viewController = UIHostingController(
-            rootView: LogmoView(settings: settings) { [weak self] in
-                self?.customSetting()
-            }
+            rootView: LogmoView(settings: settings, actions: actions)
         )
         viewController.view.backgroundColor = .clear
         
@@ -48,15 +46,12 @@ public class Logmo {
         window.isHidden = false
         
         self.window = window
+        self.viewController = viewController
     }
     
     public func hide() {
         window?.isHidden = true
         window = nil
-    }
-    
-    public func configure<CustomSetting: View>(@ViewBuilder customSetting content: @escaping () -> CustomSetting?) {
-        customSetting = { AnyView(content()) }
     }
     
     public func setTitle(_ title: String = "") {
