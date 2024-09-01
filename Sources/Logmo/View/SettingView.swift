@@ -12,6 +12,7 @@ struct SettingView: View {
     var body: some View {
         NavigationView {
             List {
+                InformationSection()
                 SettingSection()
                 AboutSection()
             }
@@ -30,11 +31,22 @@ struct SettingView: View {
     }
     
     @ViewBuilder
+    private func InformationSection() -> some View {
+        Section {
+            Navigation(symbol: "info.circle", title: "Information") {
+                InformationView()
+            }
+        } header: {
+            Text("Information")
+        }
+    }
+    
+    @ViewBuilder
     private func SettingSection() -> some View {
         Section {
             Item(
                 symbol: "square.and.arrow.up",
-                title: "Export"
+                title: "Export Logs"
             ) {
                 Button {
                     Task {
@@ -70,7 +82,7 @@ struct SettingView: View {
                     )
                 }
         } header: {
-            Text("LOGS")
+            Text("Settings")
         }
     }
     
@@ -89,22 +101,6 @@ struct SettingView: View {
             }
         } header: {
             Text("About")
-        }
-    }
-    
-    @ViewBuilder
-    private func Item(
-        symbol name: String? = nil,
-        title: String,
-        @ViewBuilder label: () -> some View = { EmptyView() }
-    ) -> some View {
-        HStack {
-            if let name {
-                Image(systemName: name)
-            }
-            Text(title)
-            Spacer()
-            label()
         }
     }
     

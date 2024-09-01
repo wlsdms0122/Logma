@@ -4,9 +4,10 @@
 //
 //  Created by JSilver on 2022/07/28.
 //
+
 import UIKit
 
-public extension UIColor {
+extension UIColor {
     convenience init(
         @Clamp(0...255) red: Int,
         @Clamp(0...255) green: Int,
