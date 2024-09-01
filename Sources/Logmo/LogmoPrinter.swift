@@ -10,6 +10,11 @@ import Logma
 
 public struct LogmoPrinter: Printer {
     // MARK: - Property
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter
+    }()
     
     // MARK: - Initiailzer
     public init() {
@@ -19,7 +24,7 @@ public struct LogmoPrinter: Printer {
     // MARK: - Lifecycle
     public func print(_ message: Any, userInfo: [Logma.Key: Any], level: Logma.Level) {
         Task { @MainActor in
-            guard let date = userInfo[.date] as? String,
+            guard let date = userInfo[.date] as? Date,
                   let fileName = (userInfo[.fileName] as? NSString)?.lastPathComponent,
                   let function = userInfo[.function] as? String,
                   let line = userInfo[.line] as? Int else {
@@ -27,7 +32,7 @@ public struct LogmoPrinter: Printer {
                 return
             }
             
-            var log = "\(date) \(fileName)/\(function)/\(line) "
+            var log = "\(dateFormatter.string(from: date)) \(fileName)/\(function)/\(line) "
             if let category = userInfo[.category] as? String, !category.isEmpty {
                 log.append("[\(category)] ")
             }
