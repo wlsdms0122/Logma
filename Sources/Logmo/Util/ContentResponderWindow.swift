@@ -39,12 +39,32 @@ class ContentResponderWindow: UIWindow {
     
     // MARK: - Lifecycle
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let view = super.hitTest(point, with: event)
-        guard view != rootViewController?.view else { return nil }
-        return view
+        if #available(iOS 18, *) {
+            let view = super.hitTest(point, with: event)
+            guard let view, _hitTest(point, from: view) != rootViewController?.view else { return nil }
+            return view
+        } else {
+            let view = super.hitTest(point, with: event)
+            guard view != rootViewController?.view else { return nil }
+            return view
+        }
     }
     
     // MARK: - Public
     
     // MARK: - Private
+    private func _hitTest(_ point: CGPoint, from view: UIView) -> UIView? {
+        let converted = convert(point, to: view)
+        
+        guard view.bounds.contains(converted)
+            && view.isUserInteractionEnabled
+            && !view.isHidden
+            && view.alpha > 0
+        else { return nil }
+        
+        return view.subviews.reversed()
+            .reduce(Optional<UIView>.none) { result, view in
+                result ?? _hitTest(point, from: view)
+            } ?? view
+    }
 }
