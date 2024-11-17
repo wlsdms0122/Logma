@@ -1,6 +1,6 @@
 //
 //  LogmoView.swift
-//  
+//
 //
 //  Created by jsilver on 2022/07/24.
 //
@@ -34,8 +34,7 @@ struct LogmoView<Actions: View>: View {
             }
                 .background(Color(hex: 0x292929, alpha: 0.9))
                 .frame(width: 34, height: isExpand ? 34 * CGFloat(children.count) : 34)
-                .clipShape(Capsule())
-                .contentShape(Capsule())
+                .clipShape(.capsule(style: .circular))
                 .animation(.spring(dampingFraction: 0.65), value: isExpand)
         }
     }
@@ -92,7 +91,7 @@ struct LogmoView<Actions: View>: View {
             .frame(width: isTitleExpand ? nil : 34, height: 34)
             .frame(maxWidth: isTitleExpand ? .infinity : nil)
             .background(Color(hex: 0x292929, alpha: 0.9))
-            .clipShape(.capsule)
+            .clipShape(.capsule(style: .circular))
             .gesture(
                 DragGesture()
                     .onEnded { gesture in
