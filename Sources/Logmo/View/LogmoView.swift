@@ -51,7 +51,7 @@ struct LogmoView<Actions: View>: View {
             }
         }
             .sheet(isPresented: $isSettingPresented) {
-                SettingView(settings) {
+                SettingView(setting) {
                     isSettingPresented = false
                 }
             }
@@ -75,7 +75,7 @@ struct LogmoView<Actions: View>: View {
     @ViewBuilder
     private func Title() -> some View {
         GeometryReader { _ in
-            Text(settings.title)
+            Text(setting.title)
                 .lineLimit(1)
                 .font(.system(size: 14, weight: .regular))
                 .foregroundColor(.white)
@@ -154,15 +154,15 @@ struct LogmoView<Actions: View>: View {
     private var namespace
     
     @StateObject
-    private var settings: Settings
+    private var setting: Setting
     private let actions: Actions
     
     // MARK: - Initializer
     init(
-        settings: Settings,
+        setting: Setting,
         @ViewBuilder actions: () -> Actions = { EmptyView() }
     ) {
-        self._settings = .init(wrappedValue: settings)
+        self._setting = .init(wrappedValue: setting)
         self.actions = actions()
     }
     
@@ -170,112 +170,3 @@ struct LogmoView<Actions: View>: View {
     
     // MARK: - Private
 }
-
-#if DEBUG
-private struct Preview: View {
-    // MARK: - View
-    var body: some View {
-        ZStack {
-            VStack {
-                Spacer()
-                
-                LogTitle()
-                
-                HStack {
-                    let message = "Hello World"
-                    
-                    LogButton(level: .debug, message)
-                    LogButton(level: .info, message)
-                    LogButton(level: .notice, message)
-                    LogButton(level: .error, message)
-                    LogButton(level: .fault, message)
-                }
-            }
-            
-            LogmoView(settings: .init())
-        }
-    }
-    
-    @ViewBuilder
-    private func LogTitle() -> some View {
-        TextField("", text: $title)
-            .accentColor(Color(hex: 0xFFFFFF))
-            .foregroundColor(Color(hex: 0xFFFFFF))
-            .multilineTextAlignment(.center)
-            .padding(8)
-            .background(Color(hex: 0x292929))
-            .cornerRadius(4)
-            .padding(16)
-            .onChange(of: title) { title in
-                settings.setTitle(title)
-            }
-    }
-    
-    @ViewBuilder
-    private func LogButton(level: Logma.Level, _ message: Any) -> some View {
-        Button {
-            switch level {
-            case .debug:
-                Logma.debug(message)
-                
-            case .info:
-                Logma.info(message)
-                
-            case .notice:
-                Logma.notice(message)
-                
-            case .error:
-                Logma.error(message)
-                
-            case .fault:
-                Logma.fault(message)
-            }
-        } label: {
-            Text("🪵")
-                .foregroundColor(.white)
-                .frame(height: 24)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 16)
-                .background(logColor(level: level))
-                .cornerRadius(20)
-        }
-    }
-    
-    // MARK: - Property
-    @StateObject
-    private var settings = Settings()
-    @State
-    private var title: String = ""
-    
-    // MARK: - Initializer
-    init() {
-        Logma.configure([LogmoPrinter()])
-    }
-    
-    // MARK: - Public
-    
-    // MARK: - Private
-    private func logColor(level: Logma.Level) -> Color {
-        switch level {
-        case .debug:
-            return Color(hex: 0x989898)
-            
-        case .info:
-            return Color(hex: 0x52A3EE)
-            
-        case .notice:
-            return Color(hex: 0xEDDD52)
-            
-        case .error:
-            return Color(hex: 0xE3953A)
-            
-        case .fault:
-            return Color(hex: 0xF03C3C)
-        }
-    }
-}
-
-#Preview {
-    Preview()
-}
-#endif
