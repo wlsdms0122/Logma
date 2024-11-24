@@ -13,7 +13,6 @@ struct SettingView: View {
         NavigationView {
             List {
                 InformationSection()
-                SettingSection()
                 AboutSection()
             }
                 .navigationTitle("Setting")
@@ -42,51 +41,6 @@ struct SettingView: View {
     }
     
     @ViewBuilder
-    private func SettingSection() -> some View {
-        Section {
-            Item(
-                symbol: "square.and.arrow.up",
-                title: "Export Logs"
-            ) {
-                Button {
-                    Task {
-                        await settings.export()
-                    }
-                } label: {
-                    if settings.isExporting {
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                    } else {
-                        EmptyView()
-                    }
-                }
-            }
-            Item(
-                symbol: "trash",
-                title: "Clean All Logs"
-            ) {
-                Button {
-                    isShowCleanAllLogsAlert = true
-                } label: {
-                    EmptyView()
-                }
-            }
-                .alert(isPresented: $isShowCleanAllLogsAlert) {
-                    Alert(
-                        title: Text("Clean All Logs"),
-                        message: Text("Are you sure you want to clean all logs?"),
-                        primaryButton: .cancel(),
-                        secondaryButton: .destructive(Text("Clean")) {
-                            settings.clear()
-                        }
-                    )
-                }
-        } header: {
-            Text("Settings")
-        }
-    }
-    
-    @ViewBuilder
     private func AboutSection() -> some View {
         Section {
             Item(
@@ -105,20 +59,17 @@ struct SettingView: View {
     }
     
     // MARK: - Property
-    @State
-    private var isShowCleanAllLogsAlert: Bool = false
-    
     @StateObject
-    private var settings: Settings
+    private var setting: Setting
     
     private let onClose: () -> Void
     
     // MARK: - Initializer
     init(
-        _ settings: Settings,
+        _ setting: Setting,
         onClose: @escaping () -> Void
     ) {
-        self._settings = .init(wrappedValue: settings)
+        self._setting = .init(wrappedValue: setting)
         self.onClose = onClose
     }
     
