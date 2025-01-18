@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 class Haptic {
     // MARK: - Property
     

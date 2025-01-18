@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 @ViewBuilder
 func Item(
     symbol name: String? = nil,
@@ -26,6 +27,7 @@ func Item(
         .lineLimit(1)
 }
 
+@MainActor
 @ViewBuilder
 func Item(
     symbol name: String? = nil,
@@ -40,6 +42,7 @@ func Item(
     }
 }
 
+@MainActor
 @ViewBuilder
 func Navigation(
     symbol name: String? = nil,
