@@ -23,7 +23,7 @@ struct InformationView: View {
             
             Section {
                 Item(title: "Platform", description: Env.platformName ?? "-")
-                Item(title: "OS Version", description: Env.osVersion.string() ?? "-")
+                Item(title: "OS Version", description: Env.osVersion.string())
                 Item(title: "Device", description: Env.deviceName)
                 Item(title: "Region", description: Env.region ?? "-")
             } header: {
