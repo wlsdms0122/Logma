@@ -62,8 +62,8 @@ extension Environment {
         infoPlist?["CFBundleDisplayName"] as? String
     }
 
-    static var region: String? {
-        infoPlist?["CFBundleDevelopmentRegion"] as? String
+    static var localization: String? {
+        Bundle.main.preferredLocalizations.first
     }
 }
 

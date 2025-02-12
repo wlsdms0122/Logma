@@ -25,7 +25,7 @@ struct InformationView: View {
                 Item(title: "Platform", description: Env.platformName ?? "-")
                 Item(title: "OS Version", description: Env.osVersion.string())
                 Item(title: "Device", description: Env.deviceName)
-                Item(title: "Region", description: Env.region ?? "-")
+                Item(title: "Localization", description: Env.localization)
             } header: {
                 Text("System")
             }
