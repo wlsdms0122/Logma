@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Logma {
+public struct Logma: @unchecked Sendable {
     public struct Key: Hashable, Equatable {
         public typealias RawValue = String
         
@@ -34,7 +34,7 @@ public struct Logma {
     }
     
     // MARK: - Property
-    private static var printers: [Printer] = []
+    nonisolated(unsafe) private static var printers: [Printer] = []
     
     // MARK: - Initializer
     
